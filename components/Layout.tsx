@@ -53,7 +53,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <LanguageSelector />
             </nav>
             <Button 
-              variant="ghost" 
+              variant="outline"
               className="md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >

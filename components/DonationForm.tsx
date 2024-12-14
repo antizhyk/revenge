@@ -23,7 +23,7 @@ type DonationFormData = z.infer<typeof schema>
 
 export default function DonationForm() {
   const [customAmount, setCustomAmount] = useState(false)
-  const { register, handleSubmit, formState: { errors } } = useForm<DonationFormData>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<DonationFormData>({
     resolver: zodResolver(schema),
   })
 
@@ -41,6 +41,8 @@ export default function DonationForm() {
     // Implement donation logic
     console.log(data)
   }
+
+  const currentAmount = watch('amount')
 
   return (
     <section id="підтримка" ref={ref} className="py-20 bg-gray-900">
@@ -69,10 +71,10 @@ export default function DonationForm() {
                 <Button
                   key={amount}
                   type="button"
-                  variant={!customAmount && register('amount').value === amount ? "default" : "outline"}
+                  variant={!customAmount && currentAmount === amount ? "default" : "outline"}
                   onClick={() => {
                     setCustomAmount(false)
-                    register('amount').onChange(amount)
+                    register('amount').onChange({ target: { value: amount } })
                   }}
                 >
                   {amount} ₴
