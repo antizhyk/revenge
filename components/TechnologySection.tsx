@@ -67,14 +67,14 @@ export default function TechnologySection() {
 
   return (
     <section className="bg-black py-24 relative">
-      <div className="hidden lg:block absolute right-0 top-0 w-1/3 h-full">
+      <div className="hidden lg:block absolute left-[30%] top-0 right-0 h-full">
         <Image
-          src="/person.jpeg"
+          src="/big_logo.jpg"
           alt="Background Person"
           fill
           className="object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
       </div>
 
       <div className="container mx-auto px-4 relative">
