@@ -47,6 +47,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <button onClick={() => scrollToSection('about-section')} className="font-mono hover:text-white transition-colors">
                 ПРО ПІДРОЗДІЛ
               </button>
+              <button onClick={() => scrollToSection('our-works')} className="font-mono hover:text-white transition-colors">
+                НАША РОБОТА
+              </button>
               <button onClick={() => scrollToSection('subscription')} className="font-mono hover:text-white transition-colors">
                 ПІДТРИМКА
               </button>
@@ -54,7 +57,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </nav>
             <Button 
               variant="outline"
-              className="md:hidden"
+              className="md:hidden relative z-[51]"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -83,6 +86,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
                 <button onClick={() => scrollToSection('about-section')} className="font-mono hover:text-white transition-colors">
                   ПРО ПІДРОЗДІЛ
+                </button>
+                <button onClick={() => scrollToSection('our-works')} className="font-mono hover:text-white transition-colors">
+                  НАША РОБОТА
                 </button>
                 <button onClick={() => scrollToSection('subscription')} className="font-mono hover:text-white transition-colors">
                   ПІДТРИМКА

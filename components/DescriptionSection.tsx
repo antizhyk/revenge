@@ -47,7 +47,7 @@ export default function DescriptionSection() {
   }
 
   return (
-    <section className="py-12 md:py-20 bg-black">
+    <section className="py-12 md:py-20 bg-black" id="about-section">
       <div className="container mx-auto px-4">
         {descriptions.map((item, index) => {
           const [ref, inView] = useInView({

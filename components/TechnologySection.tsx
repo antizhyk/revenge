@@ -66,7 +66,7 @@ export default function TechnologySection() {
   })
 
   return (
-    <section className="bg-black py-24 relative">
+    <section className="bg-black py-24 relative" id='our-works'>
       <div className="hidden lg:block absolute left-[30%] top-0 right-0 h-full">
         <Image
           src="/big_logo.jpg"
