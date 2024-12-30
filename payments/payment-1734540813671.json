@@ -1,0 +1,6 @@
+{
+  "errCode": "BAD_REQUEST",
+  "errText": "json unmarshal: : json: cannot unmarshal bool into Go struct field InvoiceCreateRequest.saveCardData of type sid_ia.SaveCardData",
+  "timestamp": "2024-12-18T16:53:33.398Z",
+  "saveCardData": true
+}

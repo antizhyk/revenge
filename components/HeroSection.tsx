@@ -10,8 +10,7 @@ export default function HeroSection() {
   const [startAnimation, setStartAnimation] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const text = "ELITE TACTICAL UNIT SPECIALIZING IN ADVANCED MILITARY OPERATIONS. DEDICATED TO PROTECTING UKRAINE'S SOVEREIGNTY AND TERRITORIAL INTEGRITY THROUGH STRATEGIC DEPLOYMENT AND PRECISION EXECUTION."
-
+  const text = "ТЕХНОЛОГІЧНА МОГУТНІСТЬ ЗАХИСТУ УКРАЇНИ – ВЗВОД УДАРНИХ БПЛА, ЩО ПОЄДНУЄ ТОЧНІСТЬ, ШВИДКІСТЬ І ВІДДАНІСТЬ ДЛЯ ПЕРЕМОГИ НА ФРОНТІ."
   useEffect(() => {
     const timer = setTimeout(() => setStartAnimation(true), 500)
 
@@ -69,9 +68,9 @@ export default function HeroSection() {
             className="flex items-center justify-center space-x-2 mb-8"
           >
             <span className="w-8 h-px bg-gray-500"></span>
-            <span className="font-mono text-gray-500">VALOR</span>
-            <span className="w-2 h-2 bg-gray-500"></span>
-            <span className="font-mono text-gray-500">STRENGTH</span>
+            <span className="font-mono text-gray-500">СМЕРТЬ З НЕБА</span>
+            {/* <span className="w-2 h-2 bg-gray-500"></span>
+            <span className="font-mono text-gray-500">STRENGTH</span> */}
             <span className="w-8 h-px bg-gray-500"></span>
           </motion.div>
           

@@ -42,7 +42,7 @@ function TechnologyCard({ title, description, videoSrc, index }: TechnologyCardP
       transition={{ duration: 0.6, delay: index * 0.2 }}
       className="w-full max-w-md"
     >
-      <h3 className="font-mono text-white text-xl mb-4 tracking-wider">{title}</h3>
+      <h3 className="font-mono text-white text-xl mb-4 tracking-wider uppercase">{title}</h3>
       <div className="relative aspect-video mb-4 overflow-hidden rounded-sm cursor-pointer" onClick={handleVideoClick}>
         <video
           ref={videoRef}
@@ -69,18 +69,18 @@ function TechnologyCard({ title, description, videoSrc, index }: TechnologyCardP
 export default function TechnologySection() {
   const technologies = [
     {
-      title: "TITLE",
-      description: "Our next-gen water electrolysis and core-cycle grid system produce cheap and abundant hydrogen.",
+      title: "Злагоджена підготовка – гарантований результат",
+      description: "Підготовка, налаштування та точність забезпечують ефективне виявлення та ліквідацію ворога.",
       videoSrc: "/1.MP4"
     },
     {
-      title: "TITLE",
-      description: "Gigasites will be home to a wide variety of location agnostic industrial needs, diverging data centers, green steel, and sustainable polymers from the traditional grid model.",
+      title: "Точність у кожному русі: нейтралізація ворога",
+      description: "Ми завжд на крок попереду. Кожен крок підготовки, кожен удар – це результат високої майстерності та стратегічного підходу. ",
       videoSrc: "/2.mp4"
     },
     {
-      title: "STITLE",
-      description: "Combining our green hydrogen with captured CO2 from coal/natural gas plants, DAC and other point capture sources, we create a wide spectrum of clean-tech solutions via a modified Fischer-Tropsch process.",
+      title: "Відсіч ворогу",
+      description: "Кожен удар – це відповідь на агресію. Ворог не уникне покарання за свої злочини. Ми забезпечуємо справедливу відсіч, гарантуючи, що кожен напад матиме свої наслідки.",
       videoSrc: "/3.mp4"
     }
   ]
@@ -102,7 +102,7 @@ export default function TechnologySection() {
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
       </div>
 
-      <div className="container mx-auto px-4 relative">
+      <div className="max-w-[1080px] mx-auto px-4 relative">
         <div className="lg:w-2/3">
           <div className="grid gap-16 md:gap-24">
             {technologies.map((tech, index) => (

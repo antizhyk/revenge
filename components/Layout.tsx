@@ -7,9 +7,20 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import { Menu, X } from 'lucide-react'
 import LanguageSelector from './LanguageSelector'
+import AuthButtons from './AuthButtons'
+import { RegisterModal } from './RegisterModal'
+import { LoginModal } from './LoginModal'
+
+type ModalType = 'register' | 'login' | null;
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [modalType, setModalType] = useState<ModalType>(null)
+
+  const openModal = (type: ModalType) => setModalType(type);
+  const closeModal = () => setModalType(null);
+
+
 // hello world
 console.log("hello world")
   useEffect(() => {
@@ -55,6 +66,7 @@ console.log("hello world")
                 ПІДТРИМКА
               </button>
               <LanguageSelector />
+              <AuthButtons openModal={openModal}/>
             </nav>
             <Button 
               variant="outline"
@@ -95,6 +107,7 @@ console.log("hello world")
                   ПІДТРИМКА
                 </button>
                 <LanguageSelector />
+                <AuthButtons openModal={openModal}/>
               </nav>
             </motion.div>
           )}
@@ -133,6 +146,14 @@ console.log("hello world")
           </div>
         </div>
       </footer>
+      <RegisterModal 
+        isOpen={modalType === 'register'}
+        onOpenChange={(open) => open ? openModal('register') : closeModal()}
+      />
+      <LoginModal 
+        isOpen={modalType === 'login'}
+        onOpenChange={(open) => open ? openModal('login') : closeModal()}
+      />
     </div>
   )
 }
