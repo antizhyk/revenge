@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/hooks/auth'
-import { useToast } from "@/components/ui/use-toast"
 import Layout from '@/components/Layout'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,15 +22,14 @@ import {
 
 
 export default function DashboardPage() {
-  // const { user } = useAuth()
-  let user = {
-    isSubscribed: true,
-  }
+  const { user } = useAuth({
+    middleware: 'auth',
+  })
+ 
   const updateEmail = () => {}
   const updatePassword = () => {}
   const subscribe = () => {}
   const unsubscribe = () => {}
-  const { toast } = useToast()
   const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -47,43 +45,24 @@ export default function DashboardPage() {
     e.preventDefault()
     try {
       await updateEmail(email)
-      toast({
-        title: "Email оновлено",
-        description: "Ваш email успішно змінено.",
-      })
     } catch (error) {
-      toast({
-        title: "Помилка",
-        description: "Не вдалося оновити email. Спробуйте ще раз.",
-        variant: "destructive",
-      })
+
     }
   }
 
   const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (password !== confirmPassword) {
-      toast({
-        title: "Помилка",
-        description: "Паролі не співпадають.",
-        variant: "destructive",
-      })
+
       return
     }
     try {
       await updatePassword(password)
-      toast({
-        title: "Пароль оновлено",
-        description: "Ваш пароль успішно змінено.",
-      })
+
       setPassword('')
       setConfirmPassword('')
     } catch (error) {
-      toast({
-        title: "Помилка",
-        description: "Не вдалося оновити пароль. Спробуйте ще раз.",
-        variant: "destructive",
-      })
+
     }
   }
 
@@ -91,16 +70,9 @@ export default function DashboardPage() {
     try {
       await unsubscribe()
       setShowCancelDialog(false)
-      toast({
-        title: "Підписку скасовано",
-        description: "Вашу підписку успішно скасовано.",
-      })
+
     } catch (error) {
-      toast({
-        title: "Помилка",
-        description: "Не вдалося скасувати підписку. Спробуйте ще раз.",
-        variant: "destructive",
-      })
+
     }
   }
 

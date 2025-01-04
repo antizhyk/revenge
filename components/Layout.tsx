@@ -10,8 +10,9 @@ import LanguageSelector from './LanguageSelector'
 import AuthButtons from './AuthButtons'
 import { RegisterModal } from './RegisterModal'
 import { LoginModal } from './LoginModal'
-
-type ModalType = 'register' | 'login' | null;
+import ExitModal from './ExitModal'
+import { Toaster } from 'react-hot-toast'
+type ModalType = 'register' | 'login' | 'exit' | null;
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -20,9 +21,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const openModal = (type: ModalType) => setModalType(type);
   const closeModal = () => setModalType(null);
 
-
-// hello world
-console.log("hello world")
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -56,15 +54,15 @@ console.log("hello world")
               </div>
             </Link>
             <nav className="hidden md:flex items-center space-x-8">
-              <button onClick={() => scrollToSection('about-section')} className="font-mono hover:text-white transition-colors">
+              <Link href="/#about-section" className="font-mono hover:text-white transition-colors">
                 ПРО ПІДРОЗДІЛ
-              </button>
-              <button onClick={() => scrollToSection('our-works')} className="font-mono hover:text-white transition-colors">
+              </Link>
+              <Link href="/#our-works" className="font-mono hover:text-white transition-colors">
                 НАША РОБОТА
-              </button>
-              <button onClick={() => scrollToSection('subscription')} className="font-mono hover:text-white transition-colors">
+              </Link>
+              <Link href="/#subscription" className="font-mono hover:text-white transition-colors">
                 ПІДТРИМКА
-              </button>
+              </Link>
               <LanguageSelector />
               <AuthButtons openModal={openModal}/>
             </nav>
@@ -146,6 +144,11 @@ console.log("hello world")
           </div>
         </div>
       </footer>
+      <Toaster />
+      <ExitModal
+        isOpen={modalType === 'exit'}
+        onOpenChange={(open) => open ? openModal('exit') : closeModal()}
+      />
       <RegisterModal 
         isOpen={modalType === 'register'}
         onOpenChange={(open) => open ? openModal('register') : closeModal()}

@@ -1,0 +1,9 @@
+{
+  "invoiceId": "2501018NtqBN3LqmjcXX",
+  "pageUrl": "https://pay.monobank.ua/2501018NtqBN3LqmjcXX",
+  "timestamp": "2025-01-01T00:32:07.733Z",
+  "saveCardData": {
+    "saveCard": true,
+    "walletId": "wallet-1735691527734"
+  }
+}

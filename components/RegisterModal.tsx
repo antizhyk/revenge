@@ -24,18 +24,29 @@ export function RegisterModal({ isOpen, onOpenChange }: RegisterModalProps) {
   // const [isOpen, setIsOpen] = useState(false) // Removed as per update 2
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('') // Додано новий стан
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const { register } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (password !== confirmPassword) { // Перевірка паролів
+      setErrors({ confirmPassword: ['Passwords do not match'] })
+      return
+    }
     try {
-      await register({ email, password, setErrors })
+      await register({ 
+        name: "user",
+        email,
+        password,
+        password_confirmation: confirmPassword,
+         setErrors })
       onOpenChange(false) // Changed as per update 2
       // Очистити форму після успішної реєстрації
       setEmail('')
       setPassword('')
+      setConfirmPassword('') // Очистити поле підтвердження паролю
     } catch (error) {
       console.error('Registration failed:', error)
     }
@@ -89,6 +100,17 @@ export function RegisterModal({ isOpen, onOpenChange }: RegisterModalProps) {
               </Button>
             </div>
             {errors.password && <p className="text-red-500 text-sm">{errors.password[0]}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Підтвердити пароль</Label>
+            <Input
+              id="confirmPassword"
+              type={showPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+            {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword[0]}</p>}
           </div>
           <Button type="submit" className="w-full">Зареєструватися</Button>
         </form>

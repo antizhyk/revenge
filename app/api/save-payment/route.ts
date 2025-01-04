@@ -1,36 +1,27 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export async function POST(request: Request) {
   try {
-    const data = await request.json()
+    const body = await request.json()
     
-    // Створюємо назву файлу з поточною датою
-    const fileName = `payment-${Date.now()}.json`
-    
-    // Шлях до директорії з платежами
-    const paymentsDir = path.join(process.cwd(), 'payments')
-    
-    // Створюємо директорію, якщо вона не існує
-    try {
-      await fs.access(paymentsDir)
-    } catch {
-      await fs.mkdir(paymentsDir, { recursive: true })
-    }
-    
-    // Зберігаємо дані у файл
-    await fs.writeFile(
-      path.join(paymentsDir, fileName),
-      JSON.stringify(data, null, 2)
-    )
-    
-    return NextResponse.json({ success: true })
+    const payment = await prisma.payment.create({
+      data: {
+        invoiceId: body.invoiceId,
+        amount: body.amount,
+        status: body.status,
+        pageUrl: body.pageUrl,
+        timestamp: body.timestamp,
+        walletId: body.saveCardData.walletId
+      }
+    })
+
+    return NextResponse.json({ success: true, payment })
   } catch (error) {
-    console.error('Помилка збереження платежу:', error)
-    return NextResponse.json(
-      { error: 'Помилка збереження платежу' },
-      { status: 500 }
-    )
+    console.error('Error saving payment:', error)
+    return NextResponse.json({ success: false, error: 'Failed to save payment' }, { status: 500 })
   }
-} 
+}
+

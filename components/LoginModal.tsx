@@ -4,16 +4,17 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Link from 'next/link'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog"
 import { useAuth } from '../hooks/auth'
 import { Eye, EyeOff } from 'lucide-react'
-import { useToast } from "@/components/ui/use-toast"
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -26,8 +27,9 @@ export function LoginModal({ isOpen, onOpenChange }: LoginModalProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [isLoading, setIsLoading] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false); // Додано новий стан
   const { login } = useAuth()
-  const { toast } = useToast()
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,7 +37,11 @@ export function LoginModal({ isOpen, onOpenChange }: LoginModalProps) {
     setErrors({})
 
     try {
-    //   await login({ email, password })
+      await login({ 
+        email,
+        password,
+        remember: rememberMe,
+        setErrors});
       onOpenChange(false)
       toast({
         title: "Успішний вхід",
@@ -107,6 +113,25 @@ export function LoginModal({ isOpen, onOpenChange }: LoginModalProps) {
             </div>
             {errors.password && <p className="text-red-500 text-sm">{errors.password[0]}</p>}
           </div>
+          <div className="flex justify-between items-center">
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              disabled={isLoading}
+            />
+            <span>Запам'ятати мене</span>
+          </label>
+          <Link
+            href="/forgot-password"
+            className="font-mono text-right text-primary hover:text-primary/90"
+            onClick={() => onOpenChange(false)}
+          >
+            Забули пароль?
+          </Link>
+          </div>
+         
           {errors.login && <p className="text-red-500 text-sm">{errors.login[0]}</p>}
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Вхід..." : "Увійти"}

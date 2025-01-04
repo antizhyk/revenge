@@ -35,11 +35,10 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             })
     }
 
-    const login = async ({ setErrors, setStatus, ...props }) => {
+    const login = async ({ setErrors, ...props }) => {
         await csrf()
 
         setErrors([])
-        setStatus(null)
 
         axios
             .post('/login', props)
@@ -96,15 +95,15 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             await axios.post('/logout').then(() => mutate())
         }
 
-        window.location.pathname = '/login'
+        window.location.pathname = '/'
     }
 
     useEffect(() => {
         if (middleware === 'guest' && redirectIfAuthenticated && user)
             router.push(redirectIfAuthenticated)
 
-        if (middleware === 'auth' && !user?.email_verified_at)
-            router.push('/verify-email')
+        // if (middleware === 'auth' && !user?.email_verified_at)
+        //     router.push('/verify-email')
         
         if (
             window.location.pathname === '/verify-email' &&
