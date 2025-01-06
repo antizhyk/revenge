@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/hooks/auth'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import Layout from '@/components/Layout'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Shield, Mail, Lock } from 'lucide-react'
+import { Shield, Mail, Lock, Loader2 } from 'lucide-react'
 import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { format } from 'date-fns'
@@ -19,13 +21,27 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
+import toast from 'react-hot-toast'
+
+
+const validationSchema = Yup.object({
+  email: Yup.string().email('Невірний формат email').required('Email обов\'язковий'),
+  currentPassword: Yup.string().required('Поточний пароль обов\'язковий'),
+  newPassword: Yup.string().min(8, 'Пароль повинен містити мінімум 8 символів').required('Новий пароль обов\'язковий'),
+  confirmNewPassword: Yup.string()
+    .oneOf([Yup.ref('newPassword')], 'Паролі повинні співпадати')
+    .required('Підтвердження пароля обов\'язкове'),
+})
 
 
 export default function DashboardPage() {
-  const { user } = useAuth({
-    middleware: 'auth',
-  })
- 
+  // const { user } = useAuth({
+  //   middleware: 'auth',
+  // })
+  const user = {
+    email: 'sdsds@ccc.com',
+    isSubscribed: true
+  }
   const updateEmail = () => {}
   const updatePassword = () => {}
   const subscribe = () => {}
@@ -40,6 +56,46 @@ export default function DashboardPage() {
   // Приклад дат для демонстрації
   const lastPaymentDate = new Date(2024, 0, 15) // 15 січня 2024
   const nextPaymentDate = new Date(2024, 1, 15) // 15 лютого 2024
+
+  const formik = useFormik({
+    initialValues: {
+      email: user?.email || '',
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      try {
+        if (values.email !== user?.email) {
+          await updateEmail(values.email)
+          // toast({
+          //   title: "Email оновлено",
+          //   description: "Ваш email успішно змінено.",
+          // })
+          toast.success('Ваш email успішно змінено.')
+        }
+        if (values.newPassword) {
+          await updatePassword(values.currentPassword, values.newPassword)
+          // toast({
+          //   title: "Пароль оновлено",
+          //   description: "Ваш пароль успішно змінено.",
+          // })
+          toast.success('Ваш пароль успішно змінено.')
+        }
+        resetForm()
+      } catch (error) {
+        // toast({
+        //   title: "Помилка",
+        //   description: "Не вдалося оновити дані. Спробуйте ще раз.",
+        //   variant: "destructive",
+        // })
+        toast.error('Не вдалося оновити дані. Спробуйте ще раз.')
+      } finally {
+        setSubmitting(false)
+      }
+    },
+  })
 
   const handleEmailUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -76,6 +132,8 @@ export default function DashboardPage() {
     }
   }
 
+
+
   return (
     <Layout>
       <div className="min-h-screen bg-black">
@@ -84,85 +142,106 @@ export default function DashboardPage() {
           <div className="grid gap-8 md:grid-cols-2">
             {/* Картка редагування профілю */}
             <Card className="border-gray-800 bg-gray-900/50 backdrop-blur">
-              <CardHeader className="space-y-1">
+              {/* <CardHeader className="space-y-1">
                 <div className="flex items-center space-x-2">
                   <Lock className="w-5 h-5 text-primary" />
                   <CardTitle className="font-mono text-xl text-white">Безпека</CardTitle>
                 </div>
                 <CardDescription>Оновіть ваші облікові дані</CardDescription>
-              </CardHeader>
+              </CardHeader> */}
               <CardContent className="space-y-6">
-                {/* Email форма */}
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <Mail className="w-4 h-4 text-primary" />
-                    <h3 className="font-mono text-lg text-white">Email адреса</h3>
-                  </div>
-                  <Separator className="bg-gray-800" />
-                  <form onSubmit={handleEmailUpdate} className="space-y-4">
+                <form onSubmit={formik.handleSubmit} className="space-y-6">
+                  {/* Email форма */}
+                  {/* <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <Mail className="w-4 h-4 text-primary" />
+                      <h3 className="font-mono text-lg text-white">Email адреса</h3>
+                    </div>
+                    <Separator className="bg-gray-800" />
                     <div className="space-y-2">
                       <Label htmlFor="email" className="font-mono text-gray-400">
-                        Поточний email
+                        Email
                       </Label>
                       <Input
                         id="email"
                         type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="font-mono bg-gray-800 border-gray-700"
+                        {...formik.getFieldProps('email')}
+                        className="font-mono bg-gray-800 border-gray-700 text-white"
                       />
+                      {formik.touched.email && formik.errors.email && (
+                        <p className="text-red-500 text-sm font-mono">{formik.errors.email}</p>
+                      )}
                     </div>
-                    <Button 
-                      type="submit" 
-                      className="font-mono w-full bg-primary hover:bg-primary/90"
-                    >
-                      Оновити Email
-                    </Button>
-                  </form>
-                </div>
+                  </div> */}
 
-                {/* Пароль форма */}
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <Lock className="w-4 h-4 text-primary" />
-                    <h3 className="font-mono text-lg text-white">Зміна паролю</h3>
-                  </div>
-                  <Separator className="bg-gray-800" />
-                  <form onSubmit={handlePasswordUpdate} className="space-y-4">
+                  {/* Пароль форма */}
+                  <div className="space-y-4 pt-4">
+                    <div className="flex items-center space-x-2">
+                      <Lock className="w-4 h-4 text-primary" />
+                      <h3 className="font-mono text-lg text-white">Зміна паролю</h3>
+                    </div>
+                    <Separator className="bg-gray-800" />
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="font-mono text-gray-400">
+                      <Label htmlFor="currentPassword" className="font-mono text-gray-400">
+                        Поточний пароль
+                      </Label>
+                      <Input
+                        id="currentPassword"
+                        type="password"
+                        {...formik.getFieldProps('currentPassword')}
+                        className="font-mono bg-gray-800 border-gray-700 text-white"
+                      />
+                      {formik.touched.currentPassword && formik.errors.currentPassword && (
+                        <p className="text-red-500 text-sm font-mono">{formik.errors.currentPassword}</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="newPassword" className="font-mono text-gray-400">
                         Новий пароль
                       </Label>
                       <Input
-                        id="password"
+                        id="newPassword"
                         type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="font-mono bg-gray-800 border-gray-700"
+                        {...formik.getFieldProps('newPassword')}
+                        className="font-mono bg-gray-800 border-gray-700 text-white"
                       />
+                      {formik.touched.newPassword && formik.errors.newPassword && (
+                        <p className="text-red-500 text-sm font-mono">{formik.errors.newPassword}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="font-mono text-gray-400">
+                      <Label htmlFor="confirmNewPassword" className="font-mono text-gray-400">
                         Підтвердіть новий пароль
                       </Label>
                       <Input
-                        id="confirmPassword"
+                        id="confirmNewPassword"
                         type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="font-mono bg-gray-800 border-gray-700"
+                        {...formik.getFieldProps('confirmNewPassword')}
+                        className="font-mono bg-gray-800 border-gray-700 text-white"
                       />
+                      {formik.touched.confirmNewPassword && formik.errors.confirmNewPassword && (
+                        <p className="text-red-500 text-sm font-mono">{formik.errors.confirmNewPassword}</p>
+                      )}
                     </div>
-                    <Button 
-                      type="submit" 
-                      className="font-mono w-full bg-primary hover:bg-primary/90"
-                    >
-                      Оновити пароль
-                    </Button>
-                  </form>
-                </div>
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full font-mono bg-primary hover:bg-primary/90"
+                    disabled={formik.isSubmitting}
+                  >
+                    {formik.isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Оновлення...
+                      </>
+                    ) : (
+                      "Оновити дані"
+                    )}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
+
 
             {/* Картка підписки */}
             <Card className="border-gray-800 bg-gray-900/50 backdrop-blur">

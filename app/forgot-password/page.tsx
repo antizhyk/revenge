@@ -7,6 +7,13 @@ import { Label } from "@/components/ui/label"
 import Layout from '@/components/Layout'
 import { useAuth } from '@/hooks/auth'
 import toast from 'react-hot-toast'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { Loader2 } from 'lucide-react'
+
+const validationSchema = Yup.object({
+  email: Yup.string().email('Невірний формат email').required('Email обов\'язковий'),
+})
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -23,27 +30,36 @@ export default function ForgotPasswordPage() {
     }
   }, [countdown])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    try {
-      // Тут має бути логіка для відправки запиту на відновлення пароля
-      // Наприклад: await sendPasswordResetEmail(email)
-      await forgotPassword({ email, setErrors, setStatus })
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        // Тут має бути логіка для відправки запиту на відновлення пароля
+        // await sendPasswordResetEmail(values.email)
+        await forgotPassword({ email: values.email, setErrors, setStatus })
       
-      if (errors.length) {
-        throw new Error('Failed to send password reset email')
+        // toast({
+        //   title: "Успіх",
+        //   description: "Перевірте вашу електронну пошту для відновлення пароля.",
+        // })
+        toast.success('Перевірте вашу електронну пошту для відновлення пароля.')
+        setCountdown(60) // Встановлюємо 60 секунд до можливості повторної відправки
+      } catch (error) {
+        // toast({
+        //   title: "Помилка",
+        //   description: "Не вдалося відправити посилання для відновлення пароля. Спробуйте ще раз.",
+        //   variant: "destructive",
+        // })
+        toast.error('Не вдалося відправити посилання для відновлення пароля. Спробуйте ще раз.')
+      } finally {
+        setSubmitting(false)
       }
+    },
+  })
 
-      setCountdown(60) // Встановлюємо 60 секунд до можливості повторної відправки
-      toast.success('Перевірте вашу електронну пошту для відновлення пароля.')
-    } catch (error) {
-      toast.error('Не вдалося відправити посилання для відновлення пароля. Спробуйте ще раз.')
-    } finally {
-      setIsLoading(false)
-    }
-  } 
 
   return (
     <Layout>
@@ -54,29 +70,42 @@ export default function ForgotPasswordPage() {
             <p className="mb-4 text-gray-300 font-mono">
               Забули пароль? Без проблем. Просто вкажіть вашу електронну адресу, і ми надішлемо вам посилання для відновлення пароля, яке дозволить вам обрати новий.
             </p>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={formik.handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="font-mono text-gray-300">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...formik.getFieldProps('email')}
                   className="font-mono bg-gray-800 border-gray-700 text-white"
-                  required
                 />
+                {formik.touched.email && formik.errors.email && (
+                  <p className="text-red-500 text-sm font-mono">{formik.errors.email}</p>
+                )}
               </div>
               <Button 
                 type="submit" 
                 className="w-full font-mono bg-primary hover:bg-primary/90"
-                disabled={isLoading || countdown > 0}
+                disabled={formik.isSubmitting || countdown > 0}
               >
-                 {isLoading ? "Відправка..." : 
-                 countdown > 0 ? `Повторна відправка можлива через ${countdown}с` : 
-                 "Відправити посилання для відновлення"}
+                {formik.isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Відправка...
+                  </>
+                ) : countdown > 0 ? (
+                  `Повторна відправка через ${countdown}с`
+                ) : (
+                  "Відправити посилання для відновлення"
+                )}
               </Button>
             </form>
+            {countdown > 0 && (
+              <p className="mt-4 text-sm text-gray-400 font-mono text-center">
+                Ви зможете повторно відправити лист через {countdown} секунд
+              </p>
+            )}
           </div>
         </div>
       </div>
