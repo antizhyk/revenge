@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Menu, X } from 'lucide-react'
 import LanguageSelector from './LanguageSelector'
 import AuthButtons from './AuthButtons'
-import { RegisterModal } from './RegisterModal'
-import { LoginModal } from './LoginModal'
 import ExitModal from './ExitModal'
 import { Toaster } from 'react-hot-toast'
 type ModalType = 'register' | 'login' | 'exit' | null;
@@ -148,14 +146,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <ExitModal
         isOpen={modalType === 'exit'}
         onOpenChange={(open) => open ? openModal('exit') : closeModal()}
-      />
-      <RegisterModal 
-        isOpen={modalType === 'register'}
-        onOpenChange={(open) => open ? openModal('register') : closeModal()}
-      />
-      <LoginModal 
-        isOpen={modalType === 'login'}
-        onOpenChange={(open) => open ? openModal('login') : closeModal()}
       />
     </div>
   )
