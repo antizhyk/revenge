@@ -25,7 +25,7 @@ import toast from 'react-hot-toast'
 
 
 const validationSchema = Yup.object({
-  email: Yup.string().email('Невірний формат email').required('Email обов\'язковий'),
+  // email: Yup.string().email('Невірний формат email').required('Email обов\'язковий'),
   currentPassword: Yup.string().required('Поточний пароль обов\'язковий'),
   newPassword: Yup.string().min(8, 'Пароль повинен містити мінімум 8 символів').required('Новий пароль обов\'язковий'),
   confirmNewPassword: Yup.string()
@@ -35,21 +35,19 @@ const validationSchema = Yup.object({
 
 
 export default function DashboardPage() {
-  // const { user } = useAuth({
-  //   middleware: 'auth',
-  // })
-  const user = {
-    email: 'sdsds@ccc.com',
-    isSubscribed: true
-  }
+  const { user, updatePassword } = useAuth({
+    middleware: 'auth',
+  })
+
   const updateEmail = () => {}
-  const updatePassword = () => {}
   const subscribe = () => {}
   const unsubscribe = () => {}
   const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showCancelDialog, setShowCancelDialog] = useState(false)
+  const [errors, setErrors] = useState<string[]>([])
+  const [status, setStatus] = useState<string | null>(null)
 
 
 
@@ -59,29 +57,44 @@ export default function DashboardPage() {
 
   const formik = useFormik({
     initialValues: {
-      email: user?.email || '',
+      // email: user?.email || '',
       currentPassword: '',
       newPassword: '',
       confirmNewPassword: '',
     },
     validationSchema: validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
+      console.log("onSubmit", values)
       try {
-        if (values.email !== user?.email) {
-          await updateEmail(values.email)
-          // toast({
-          //   title: "Email оновлено",
-          //   description: "Ваш email успішно змінено.",
-          // })
-          toast.success('Ваш email успішно змінено.')
-        }
+        // if (values.email !== user?.email) {
+        //   await updateEmail(values.email)
+        //   // toast({
+        //   //   title: "Email оновлено",
+        //   //   description: "Ваш email успішно змінено.",
+        //   // })
+        //   toast.success('Ваш email успішно змінено.')
+        // }
+        
         if (values.newPassword) {
-          await updatePassword(values.currentPassword, values.newPassword)
-          // toast({
-          //   title: "Пароль оновлено",
-          //   description: "Ваш пароль успішно змінено.",
-          // })
-          toast.success('Ваш пароль успішно змінено.')
+         const errors = await updatePassword(
+            {
+            setErrors,
+            setStatus,
+            password_confirmation: values.confirmNewPassword,
+            password: values.newPassword,
+            current_password: values.currentPassword,
+            
+            }
+          )
+
+          if (errors) {
+            // toast.error('Не вдалося увійти. Перевірте ваші дані та спробуйте ще раз.');
+            toast.error('Не вдалося оновити дані. Спробуйте ще раз.')
+            // setErrors(parseErrors(errors));
+          } else {
+            // Успішний вхід
+            toast.success('Ваш пароль успішно змінено.')
+          }
         }
         resetForm()
       } catch (error) {
@@ -90,6 +103,7 @@ export default function DashboardPage() {
         //   description: "Не вдалося оновити дані. Спробуйте ще раз.",
         //   variant: "destructive",
         // })
+        console.error('Update failed:', error)
         toast.error('Не вдалося оновити дані. Спробуйте ще раз.')
       } finally {
         setSubmitting(false)

@@ -60,6 +60,26 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             })
     }
 
+    const updatePassword = async ({ setErrors, setStatus, ...props }) => {
+        console.log("updatePassword", props)
+        await csrf()
+
+        setErrors([])
+        setStatus(null)
+
+        return axios
+            .post('/api/users/change-password', props)
+            .then(response => setStatus(response.data.status))
+            .then(() => null)
+            .catch(error => {
+                if (error.response.status !== 422) throw error
+
+                setErrors(error.response.data.errors)
+                return error.response.data.errors
+            })
+
+    }
+
     const forgotPassword = async ({ setErrors, setStatus, email }) => {
         await csrf()
 
@@ -135,5 +155,6 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         resetPassword,
         resendEmailVerification,
         logout,
+        updatePassword
     }
 }
