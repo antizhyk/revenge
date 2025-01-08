@@ -10,6 +10,7 @@ import Layout from '@/components/Layout'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAuth } from '@/hooks/auth'
+import parseErrors from '@/assets/parseErrors'
 
 const validationSchema = Yup.object({
   password: Yup.string().min(8, 'Пароль повинен містити мінімум 8 символів').required('Пароль обов\'язковий'),
@@ -24,7 +25,7 @@ export default function PasswordResetPage({ params }: { params: { token: string 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [email, setEmail] = useState('')
   const {resetPassword} = useAuth()
-  const [errors, setErrors] = useState(null)
+  const [errors, setErrors] = useState([])
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function PasswordResetPage({ params }: { params: { token: string 
         // Тут має бути логіка для відправки нового пароля на сервер
         // await resetPassword(params.token, email, values.password)
         const token = params.token
-        await resetPassword({
+        const errors = await resetPassword({
           token,
           email,
           password: values.password,
@@ -58,8 +59,14 @@ export default function PasswordResetPage({ params }: { params: { token: string 
         //   title: "Успіх",
         //   description: "Ваш пароль успішно змінено",
         // })
+        if (errors) {
+          toast.error('Не вдалося змінити пароль. Спробуйте ще раз.')
+          setErrors(parseErrors(errors));
+        }else
+        {
         toast.success('Ваш пароль успішно змінено')
         router.push('/login')
+        }
       } catch (error) {
         // toast({
         //   title: "Помилка",
@@ -82,6 +89,13 @@ export default function PasswordResetPage({ params }: { params: { token: string 
           <h1 className="text-3xl font-bold mb-6 text-center text-white font-mono">Відновлення пароля</h1>
           <div className="bg-gray-900 shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <form onSubmit={formik.handleSubmit} className="space-y-4">
+            {errors.length > 0 && (
+  <div className="text-red-500 text-sm font-mono space-y-1">
+    {errors.map((error, index) => (
+      <p key={index}>{error}</p>
+    ))}
+  </div>
+)}
               <div className="space-y-2">
                 <Label htmlFor="email" className="font-mono text-gray-300">Email</Label>
                 <Input

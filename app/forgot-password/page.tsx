@@ -10,6 +10,7 @@ import toast from 'react-hot-toast'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Loader2 } from 'lucide-react'
+import parseErrors from '@/assets/parseErrors'
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Невірний формат email').required('Email обов\'язковий'),
@@ -18,7 +19,7 @@ const validationSchema = Yup.object({
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const { forgotPassword } = useAuth()
-  const [errors, setErrors] = useState<Record<string, string[]>>({})
+  const [errors, setErrors] = useState([])
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [isLoading, setIsLoading] = useState(false)
   const [countdown, setCountdown] = useState(0)
@@ -39,14 +40,20 @@ export default function ForgotPasswordPage() {
       try {
         // Тут має бути логіка для відправки запиту на відновлення пароля
         // await sendPasswordResetEmail(values.email)
-        await forgotPassword({ email: values.email, setErrors, setStatus })
+        const errors = await forgotPassword({ email: values.email, setErrors, setStatus })
       
         // toast({
         //   title: "Успіх",
         //   description: "Перевірте вашу електронну пошту для відновлення пароля.",
         // })
+        if (errors) {
+          toast.error('Не вдалося відправити посилання для відновлення пароля. Спробуйте ще раз.')
+          setErrors(parseErrors(errors));
+        }else{
         toast.success('Перевірте вашу електронну пошту для відновлення пароля.')
         setCountdown(60) // Встановлюємо 60 секунд до можливості повторної відправки
+
+        }
       } catch (error) {
         // toast({
         //   title: "Помилка",
@@ -71,6 +78,13 @@ export default function ForgotPasswordPage() {
               Забули пароль? Без проблем. Просто вкажіть вашу електронну адресу, і ми надішлемо вам посилання для відновлення пароля, яке дозволить вам обрати новий.
             </p>
             <form onSubmit={formik.handleSubmit} className="space-y-4">
+            {errors.length > 0 && (
+  <div className="text-red-500 text-sm font-mono space-y-1">
+    {errors.map((error, index) => (
+      <p key={index}>{error}</p>
+    ))}
+  </div>
+)}
               <div className="space-y-2">
                 <Label htmlFor="email" className="font-mono text-gray-300">Email</Label>
                 <Input

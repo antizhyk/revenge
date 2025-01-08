@@ -67,6 +67,7 @@ export default function VerifyRegistrationPage() {
                    } else {
                    router.push('/dashboard')
                    }
+                   toast.success('Реєстрацію підтверджено успішно!')
             }
         })
         .catch((error) => {
@@ -92,7 +93,7 @@ export default function VerifyRegistrationPage() {
         //   title: "Успіх",
         //   description: "Реєстрацію підтверджено успішно!",
         // })
-        toast.success('Реєстрацію підтверджено успішно!')
+     
         // router.push('/dashboard') // Перенаправлення на дашборд після успішної верифікації
       } catch (error) {
         // toast({

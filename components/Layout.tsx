@@ -9,7 +9,6 @@ import { Menu, X } from 'lucide-react'
 import LanguageSelector from './LanguageSelector'
 import AuthButtons from './AuthButtons'
 import ExitModal from './ExitModal'
-import { Toaster } from 'react-hot-toast'
 type ModalType = 'register' | 'login' | 'exit' | null;
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -142,7 +141,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </footer>
-      <Toaster />
       <ExitModal
         isOpen={modalType === 'exit'}
         onOpenChange={(open) => open ? openModal('exit') : closeModal()}

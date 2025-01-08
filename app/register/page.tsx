@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from '@/hooks/auth'
 import { Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react'
-import { toast, Toaster } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import parseErrors from '@/assets/parseErrors'
 
 
 const validationSchema = Yup.object({
@@ -43,23 +44,25 @@ export default function RegisterPage() {
     validationSchema: validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        await register({
+        const errors = await register({
           name: values.name,
           email: values.email,
           password: values.password,
           password_confirmation: values.passwordConfirmation,
-          setErrors,
-          setStatus: (status) => {
-            console.log("Status:", status)
-          },
+          setErrors
         })
 
         // toast({
         //   title: "Успіх",
         //   description: "Ви успішно зареєструвалися.",
         // })
+        if (errors) {
+          toast.error('Не вдалося зареєструватися. Перевірте ваші дані та спробуйте ще раз.')
+          setErrors(parseErrors(errors))
+        } else {
         toast.success('Ви успішно зареєструвалися.')
         router.push('/verify-registration')
+        }
       } catch (error) {
         console.error('Registration failed:', error)
         // toast({
@@ -91,6 +94,13 @@ export default function RegisterPage() {
         </Link>
         <h1 className="text-3xl font-bold mb-6 text-center text-white font-mono">Реєстрація</h1>
         <form onSubmit={formik.handleSubmit} className="space-y-4 bg-gray-900 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        {errors.length > 0 && (
+  <div className="text-red-500 text-sm font-mono space-y-1">
+    {errors.map((error, index) => (
+      <p key={index}>{error}</p>
+    ))}
+  </div>
+)}
           <div className="space-y-2">
             <Label htmlFor="name" className="font-mono text-gray-300">Ім'я</Label>
             <Input
@@ -185,7 +195,6 @@ export default function RegisterPage() {
           </Link>
         </div>
       </div>
-      <Toaster />
     </div>
   )
 }

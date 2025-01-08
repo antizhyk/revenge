@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from '@/hooks/auth'
 import { Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react'
-import { toast, Toaster } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import parseErrors from '@/assets/parseErrors'
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Невірний формат email').required('Email обов\'язковий'),
@@ -22,15 +23,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
 
-  const parseErrors = (errorObject) => {
-    const parsedErrors = [];
-    for (const key in errorObject) {
-      if (errorObject[key].length > 0) {
-        parsedErrors.push(...errorObject[key]);
-      }
-    }
-    return parsedErrors;
-  };
+
 
   const { login } = useAuth({
     middleware: 'guest',
@@ -56,7 +49,6 @@ export default function LoginPage() {
           setErrors(parseErrors(errors));
         } else {
           // Успішний вхід
-          debugger
           toast.success('Ви успішно увійшли в систему.', { id: 'login-success' });
           
           const fromSupport = localStorage.getItem('fromSupport');
@@ -156,7 +148,6 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
-      <Toaster />
     </div>
   )
 }
