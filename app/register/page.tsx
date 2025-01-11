@@ -81,7 +81,8 @@ export default function RegisterPage() {
   useEffect(() => {
     const fromSupport = localStorage.getItem('fromSupport')
     if (fromSupport === 'true') {
-      toast('Будь ласка, зареєструйтесь для продовження підтримки', { icon: 'ℹ️' })
+      toast('Будь ласка, зареєструйтесь або увійдіть для продовження', { icon: 'ℹ️' })
+      localStorage.removeItem('fromSupport')
     }
   }, [])
 

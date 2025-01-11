@@ -18,32 +18,19 @@ export default function SubscriptionSection() {
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const { user } = useAuth()
   const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
 
   const handleQuickAmount = (value: number) => {
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current)
-    }
-    
-    setAmount('')
-    setIsTyping(true)
-    
-    const digits = value.toString().split('')
-    let currentIndex = 0
-    
-    const typeNextDigit = () => {
-      if (currentIndex < digits.length) {
-        setAmount(prev => prev + digits[currentIndex])
-        currentIndex++
-        typingTimeoutRef.current = setTimeout(typeNextDigit, 100)
-      } else {
-        setIsTyping(false)
-      }
-    }
-    
-    typeNextDigit()
+   console.log('value', value)
+   //set value to input
+    setAmount(value.toString())
   }
 
   const handleSupport = () => {
+    if (!amount) {
+      setError('Введіть суму')
+      return
+    }
     if (!user) {
       localStorage.setItem('fromSupport', 'true')
       localStorage.setItem('supportAmount', amount)
@@ -162,26 +149,18 @@ export default function SubscriptionSection() {
                   Ваша підтримка допомагає нам захищати Україну та її громадян. 
                   Кожен внесок наближає нас до перемоги.
                 </p>
+                {error && (
+                  <div className="text-red-500 text-sm font-mono">{error}</div>
+                )}
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="relative flex-grow group">
-                    <span className="absolute left-0 top-0 h-full flex items-center pl-4 pointer-events-none">
-                      {(isTyping || amount === '') && (
-                        <span 
-                          className="inline-block w-[1px] h-5 bg-white opacity-75"
-                          style={{ 
-                            boxShadow: '0 0 5px rgba(255,255,255,0.7), 0 0 10px rgba(255,255,255,0.5), 0 0 15px rgba(255,255,255,0.3)',
-                            animation: 'blink 1s step-end infinite'
-                          }}
-                        />
-                      )}
-                    </span>
                     <input
                       ref={inputRef}
                       type="text"
                       inputMode="numeric"
                       value={amount}
                       onChange={handleInputChange}
-                      className="w-full bg-black/30 backdrop-blur-sm border border-gray-700 rounded-md px-4 py-2 text-white font-mono text-lg focus:outline-none focus:ring-1 focus:ring-gray-500 shadow-[0_0_15px_rgba(255,255,255,0.1)] caret-transparent pl-6"
+                      className="w-full bg-black/30 backdrop-blur-sm border border-gray-700 rounded-md px-4 py-2 text-white font-mono text-lg focus:outline-none focus:ring-1 focus:ring-gray-500 shadow-[0_0_15px_rgba(255,255,255,0.1)] pl-6"
                       style={{ textShadow: '0 0 5px rgba(255,255,255,0.5)' }}
                     />
                   </div>
