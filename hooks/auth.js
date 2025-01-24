@@ -118,7 +118,9 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             })
     }
 
-    const resendEmailVerification = ({ setStatus }) => {
+    const resendEmailVerification = async ({ setStatus }) => {
+        await csrf()
+
         axios
             .post('/email/verification-notification')
             .then(response => setStatus(response.data.status))

@@ -60,6 +60,7 @@ export default function RegisterPage() {
           toast.error('Не вдалося зареєструватися. Перевірте ваші дані та спробуйте ще раз.')
           setErrors(parseErrors(errors))
         } else {
+        window.localStorage.setItem('emailForVerify', values.email)
         toast.success('Ви успішно зареєструвалися.')
         router.push('/verify-registration')
         }

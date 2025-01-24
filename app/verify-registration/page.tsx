@@ -31,7 +31,7 @@ export default function VerifyRegistrationPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [countdown, setCountdown] = useState(120) // 2 minutes in seconds
   const  {resendEmailVerification} = useAuth()
-
+  const [status, setStatus] = useState('')
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prevCountdown) => {
@@ -49,7 +49,6 @@ export default function VerifyRegistrationPage() {
 
   async function verifyRegistrationCode(code: string) {
     // /verify-email
-
     const email = localStorage.getItem('emailForVerify')
     // localStorage.removeItem('emailForVerify')
     await axios
@@ -110,15 +109,17 @@ export default function VerifyRegistrationPage() {
 
 
   const handleResendCode = async () => {
+
     if (countdown > 0) return
 
     setIsLoading(true)
     try {
-      await resendEmailVerification()
-      
+      await resendEmailVerification({setStatus})
+      console.log('handleResendCode', status)
       toast.success('Новий код відправлено на вашу електронну пошту.')
       setCountdown(120) // Скидаємо таймер
     } catch (error) {
+      console.error('error', error) 
       toast.error('Не вдалося відправити новий код. Спробуйте пізніше.')
     } finally {
       setIsLoading(false)
