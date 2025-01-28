@@ -134,6 +134,26 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         window.location.pathname = '/'
     }
 
+    const getUserSubscription = async () => {
+        await csrf()
+        return axios.get('/api/subscriptions/user')
+        .then(response => response.data.data)
+        .catch(error => {
+            if (error.response.status !== 422) throw error
+            return error.response.data.errors
+        })
+    }
+    // /subscription/cancel
+    const cancelSubscription = async () => {
+        await csrf()
+        return axios.post('/api/subscription/cancel')
+        .then(response => response.data.data)
+        .catch(error => {
+            if (error.response.status !== 422) throw error
+            return error.response.data.errors
+        })
+    }
+
     useEffect(() => {
         if (middleware === 'guest' && redirectIfAuthenticated && user)
             router.push(redirectIfAuthenticated)
@@ -157,6 +177,8 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         resetPassword,
         resendEmailVerification,
         logout,
-        updatePassword
+        updatePassword,
+        getUserSubscription,
+        cancelSubscription
     }
 }

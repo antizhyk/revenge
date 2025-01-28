@@ -4,7 +4,8 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useAuth } from '@/hooks/auth'
 
 interface SubscriptionSectionViewProps {
   amount: string;
@@ -27,11 +28,23 @@ export default function SubscriptionSectionView({
   handleSupport,
   handleInputChange,
 }: SubscriptionSectionViewProps) {
+    const { getUserSubscription } = useAuth({
+      middleware: 'auth',
+    })
+    const [subscription, setSubscription] = useState<any>(null)
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   })
   const router = useRouter()
+
+  useEffect(() => {
+    if (user) {
+      getUserSubscription().then((data) => {
+        setSubscription(data)
+      })
+    }
+  }, [user])
 
   return (
     <section id="subscription" ref={ref} className="py-20 bg-black border-t border-gray-800">
@@ -52,7 +65,7 @@ export default function SubscriptionSectionView({
             transition={{ duration: 0.6, delay: 0.2 }}
             className="space-y-6"
           >
-            {user?.isSubscribed ? (
+            {subscription? (
               <div className="text-center">
                 <p className="font-mono text-lg mb-8 text-gray-300">
                   Ваша підтримка допомагає нам захищати Україну та її громадян. 

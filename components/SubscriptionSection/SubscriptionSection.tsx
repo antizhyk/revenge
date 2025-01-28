@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/auth'
 import SubscriptionSectionView from '@/components/SubscriptionSection/SubscriptionSectionView'
+import axios from '@/lib/axios'
 
 export default function SubscriptionSection() {
   const [amount, setAmount] = useState<string>('')
@@ -50,7 +51,7 @@ export default function SubscriptionSection() {
             destination: "Підтримка місії",
           },
           redirectUrl: window.location.origin + '/dashboard',
-          webHookUrl: window.location.origin + '/api/webhook/mono',
+          webHookUrl: `http://91.239.233.45:8000/api/subscriptions/create/${user.id}`,
           saveCardData: {
             saveCard: true,
             walletId: `wallet-${Date.now()}`
@@ -58,21 +59,27 @@ export default function SubscriptionSection() {
         }),
       })
 
+
+      console.log('response', response)
+      // save in local storage
       const data = await response.json()
+
+      window.localStorage.setItem('paymentData', JSON.stringify({
+        ...data,
+      }))
       
-      await fetch('/api/save-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          timestamp: new Date().toISOString(),
-          saveCardData: {
-            saveCard: true,
-            walletId: `wallet-${Date.now()}`
-          }
-        })
+      // const data = await response.json()
+      // write data in response.json
+      await axios.get('/sanctum/csrf-cookie')
+      await axios.post('/api/first-pay-invoice-id', {
+        invoice_id: data.invoiceId,
+        user_id: user.id,
+      })
+      .then((response) => {
+        console.log('response', response)
+      })
+      .catch((error) => {
+        console.error('error', error)
       })
       
       if (data.pageUrl) {

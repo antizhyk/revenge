@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/auth'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -35,25 +35,24 @@ const validationSchema = Yup.object({
 
 
 export default function DashboardPage() {
-  const { user, updatePassword } = useAuth({
+  const { user, updatePassword, getUserSubscription, cancelSubscription } = useAuth({
     middleware: 'auth',
   })
 
   const updateEmail = () => {}
-  const subscribe = () => {}
-  const unsubscribe = () => {}
   const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
   const [status, setStatus] = useState<string | null>(null)
+  const [subscription, setSubscription] = useState(null)
 
-
+  
 
   // Приклад дат для демонстрації
-  const lastPaymentDate = new Date(2024, 0, 15) // 15 січня 2024
-  const nextPaymentDate = new Date(2024, 1, 15) // 15 лютого 2024
+  // const lastPaymentDate = new Date(2024, 0, 15) // 15 січня 2024
+  // const nextPaymentDate = new Date(2024, 1, 15) // 15 лютого 2024
 
   const formik = useFormik({
     initialValues: {
@@ -138,15 +137,39 @@ export default function DashboardPage() {
 
   const handleUnsubscribe = async () => {
     try {
-      await unsubscribe()
-      setShowCancelDialog(false)
-
+      await cancelSubscription()
+      setSubscription(null)
+      // toast.success('', { id: 'login-success' });
+      toast.success('Ви успішно відписались від щомісячного донату.')
     } catch (error) {
-
+      console.error('Unsubscribe failed:', error)
+      toast.error('Не вдалося відписатись від щомісячного донату.')
+     
+    } finally {
+      setShowCancelDialog(false)
     }
   }
 
+  // used useEffect and async function to get user subscription
+  useEffect(() => {
+    const fetchData = async () => {
+      const subscription = await getUserSubscription()
+          // create const subscriptionDayPay subscription.end_date in formate "2025-02-28T00:00:00.000000Z" + 1 day
+    let subscriptionDayPay = new Date(subscription.end_date)
+    let subscriptionLastPaymentDate = new Date(subscription.end_date)
+    subscriptionDayPay.setDate(subscriptionDayPay.getDate() + 1)
+    subscriptionLastPaymentDate.setMonth(subscriptionLastPaymentDate.getMonth() - 1)
+    subscription.subscriptionDayPay = subscriptionDayPay
+    subscription.subscriptionLastPaymentDate = subscriptionLastPaymentDate
+    
+    console.log('subscriptionDayPay', subscriptionDayPay)
+      setSubscription(subscription)
+    }
+    fetchData()
 
+  }, [])
+
+  console.log('subscription', subscription)
 
   return (
     <Layout>
@@ -267,14 +290,14 @@ export default function DashboardPage() {
                 {/* <CardDescription>Управління вашою підпискою</CardDescription> */}
               </CardHeader>
               <CardContent>
-                {user?.isSubscribed ? (
+                {subscription ? (
                   <div className="space-y-6">
                     <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
                       <p className="font-mono text-lg text-white mb-4">
                         Дякуємо що підписались на щомісячний донат у розмірі:
                       </p>
                       <p className="font-mono text-3xl text-primary font-bold">
-                        100 грн
+                        {subscription?.amount / 100} грн
                       </p>
                     </div>
                     
@@ -285,7 +308,7 @@ export default function DashboardPage() {
                             Останній платіж
                           </p>
                           <p className="font-mono text-white">
-                            {format(lastPaymentDate, 'd MMMM yyyy', { locale: uk })}
+                            {format(subscription.subscriptionLastPaymentDate, 'd MMMM yyyy', { locale: uk })}
                           </p>
                         </div>
                         <div className="space-y-2">
@@ -293,7 +316,7 @@ export default function DashboardPage() {
                             Наступний платіж
                           </p>
                           <p className="font-mono text-white">
-                            {format(nextPaymentDate, 'd MMMM yyyy', { locale: uk })}
+                            {format(subscription?.subscriptionDayPay, 'd MMMM yyyy', { locale: uk })}
                           </p>
                         </div>
                       </div>
