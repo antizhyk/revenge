@@ -28,9 +28,7 @@ export default function SubscriptionSectionView({
   handleSupport,
   handleInputChange,
 }: SubscriptionSectionViewProps) {
-    const { getUserSubscription } = useAuth({
-      middleware: 'auth',
-    })
+    const { getUserSubscription } = useAuth()
     const [subscription, setSubscription] = useState<any>(null)
   const [ref, inView] = useInView({
     triggerOnce: true,
