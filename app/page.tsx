@@ -1,36 +1,52 @@
+// pages/index.js
 "use client"
-import DescriptionSection from "@/components/DescriptionSection";
-import HeroSection from "@/components/HeroSection";
-import Layout from "@/components/Layout";
-import SubscriptionSection from "@/components/SubscriptionSection/SubscriptionSection";
-import TechnologySection from "@/components/TechnologySection";
+import { Suspense } from 'react';
+import DescriptionSection from "@/components/DescriptionSection"; // Server component (if possible)
+import HeroSection from "@/components/HeroSection";        // Server component (if possible)
+import Layout from "@/components/Layout";            // Server component (if possible)
+import SubscriptionSection from "@/components/SubscriptionSection/SubscriptionSection"; // Server component (if possible)
+import TechnologySection from "@/components/TechnologySection";  // Server component (if possible)
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
+// Server Components: No access to useSearchParams!
+const LayoutServer = ({ children }) => <Layout>{children}</Layout>;
+const HeroSectionServer = () => <HeroSection />;
+const DescriptionSectionServer = () => <DescriptionSection />;
+const TechnologySectionServer = () => <TechnologySection />;
+const SubscriptionSectionServer = () => <SubscriptionSection />;
 
-export default function Home() {
-  const searchParams = useSearchParams()
+
+
+function HomePageContent() {
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    const scrollTo = searchParams.get('scrollTo')
+    const scrollTo = searchParams.get('scrollTo');
     if (scrollTo) {
-      const element = document.getElementById(scrollTo)
+      const element = document.getElementById(scrollTo);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     }
-  }, [searchParams])
+  }, [searchParams]);
 
-  
   return (
-    <Layout>
-      <HeroSection />
-      {/* <AboutSection /> */}
-      {/* <GallerySection /> */}
-      <DescriptionSection/>  
-      <TechnologySection />
-      <SubscriptionSection />
-    </Layout>
-  )
+    <>  {/* Fragment to avoid unnecessary div */}
+      <LayoutServer> {/* Use Server Components here */}
+        <HeroSectionServer />
+        <DescriptionSectionServer />
+        <TechnologySectionServer />
+        <SubscriptionSectionServer />
+      </LayoutServer>
+    </>
+  );
 }
 
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomePageContent />
+    </Suspense>
+  );
+}

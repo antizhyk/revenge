@@ -21,11 +21,11 @@ export default function TestComponent() {
           ccy: 980, // Код валюти (980 - UAH)
           merchantPaymInfo: {
             reference: `test-payment-${Date.now()}`, // Унікальний ідентифікатор платежу
-            destination: "Тестовий платіж", // Призначення платежу
+            destination: "Тестовий платіж", // Призначення платеу
           },
           redirectUrl: window.location.origin + '/test', // URL для повернення після оплати
           // webHookUrl: '/api/webhook/mono', // URL для отримання статусу платежу
-          webHookUrl: 'http://91.239.233.45:8000/api/subscriptions/create',
+          webHookUrl: process.env.NEXT_PUBLIC_BACKEND_URL +'/api/subscriptions/create',
           saveCardData: {
             saveCard: true,
             walletId: `wallet-${Date.now()}` // Унікальний ідентифікатор гаманця

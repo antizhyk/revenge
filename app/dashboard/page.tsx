@@ -39,7 +39,9 @@ export default function DashboardPage() {
     middleware: 'auth',
   })
 
-  const updateEmail = () => {}
+  const updateEmail = (email) => {
+    console.log(email)
+  }
   const [email, setEmail] = useState(user?.email || '')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -126,6 +128,7 @@ export default function DashboardPage() {
       return
     }
     try {
+      //@ts-ignore
       await updatePassword(password)
 
       setPassword('')

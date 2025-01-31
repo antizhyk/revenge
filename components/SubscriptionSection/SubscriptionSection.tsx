@@ -51,7 +51,7 @@ export default function SubscriptionSection() {
             destination: "Підтримка місії",
           },
           redirectUrl: window.location.origin + '/dashboard',
-          webHookUrl: `http://91.239.233.45:8000/api/subscriptions/create/${user.id}`,
+          webHookUrl: process.env.NEXT_PUBLIC_BACKEND_URL + `/api/subscriptions/create/${user.id}`,
           saveCardData: {
             saveCard: true,
             walletId: `wallet-${Date.now()}`
