@@ -37,7 +37,7 @@ export default function LanguageSelector() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button
+      {/* <button
         onClick={toggleDropdown}
         className="flex items-center space-x-1 font-mono text-white hover:text-gray-300 transition-colors"
       >
@@ -56,7 +56,7 @@ export default function LanguageSelector() {
             </button>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   )
 }

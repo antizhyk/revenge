@@ -133,6 +133,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <a href="https://www.instagram.com/revengegroup" target="_blank" rel="noopener noreferrer" className="font-mono text-sm hover:text-white transition-colors">
               INSTAGRAM
             </a>
+            <a href="https://www.youtube.com/@Revenge_group/featured" target="_blank" rel="noopener noreferrer" className="font-mono text-sm hover:text-white transition-colors">
+              YOUTUBE
+            </a>
           </div>
           <div className="mt-8 text-center">
             <p className="font-mono text-xs">

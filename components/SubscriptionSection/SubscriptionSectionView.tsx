@@ -54,7 +54,7 @@ export default function SubscriptionSectionView({
             transition={{ duration: 0.6 }}
             className="font-mono text-3xl mb-8 text-center text-white"
           >
-            {user?.isSubscribed ? "ДЯКУЄМО ЗА ВАШУ ПІДТРИМКУ" : "ПІДТРИМКА МІСІЇ"}
+            {user?.isSubscribed ? "ДЯКУЄМО ЗА ВАШУ ПІДТРИМКУ" : "Ти можеш разом з нами наблизити перемогу"}
           </motion.h2>
           
           <motion.div
@@ -80,7 +80,7 @@ export default function SubscriptionSectionView({
               <>
                 <p className="font-mono text-lg mb-8 text-center text-gray-300">
                   Ваша підтримка допомагає нам захищати Україну та її громадян. 
-                  Кожен внесок наближає нас до перемоги.
+                  Кожен внесок наближає нас до перемоги. Підпишись на щомісячний донат. 
                 </p>
                 {error && (
                   <div className="text-red-500 text-sm font-mono">{error}</div>
