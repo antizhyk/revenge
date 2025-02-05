@@ -21,3 +21,18 @@ runConfig:
   # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
   # - variable: MY_SECRET
   #   secret: mySecretRef
+env:
+  # Get these values from the Firebase console
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyAiW3_mOw2sz93oRN5oXm2utCWEo1Z_Yys
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: revenge-group.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: revenge-group
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: revenge-group.firebasestorage.app
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: 849427250519
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:849427250519:web:d53da5581e1748e5469212
+
