@@ -45,7 +45,7 @@ export default function LoginPage() {
     const user = await signInWithGoogle();
     if (user) {
       //@ts-ignore
-      await googleLogin(user.accessToken)
+      await googleLogin(user.oauthAccessToken)
     }
   }
 
