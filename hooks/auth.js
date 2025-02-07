@@ -143,7 +143,17 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             return error.response.data.errors
         })
     }
-    // /subscription/cancel
+
+    const googleLogin = async (token) => {
+        await csrf()
+        return axios.get(`/api/auth/google?token=${token}`)
+        .then(response => response.data.data)
+        .catch(error => {
+            if (error.response.status !== 422) throw error
+            return error.response.data.errors
+        })
+    }
+    
     const cancelSubscription = async () => {
         await csrf()
         return axios.post('/api/subscription/cancel')
@@ -179,6 +189,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         logout,
         updatePassword,
         getUserSubscription,
-        cancelSubscription
+        cancelSubscription,
+        googleLogin
     }
 }

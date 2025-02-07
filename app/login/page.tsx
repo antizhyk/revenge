@@ -12,6 +12,15 @@ import { toast } from 'react-hot-toast'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import parseErrors from '@/assets/parseErrors'
+import { signInWithGoogle } from '@/lib/firebase/auth'
+
+interface User {
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+  uid: string;
+  accessToken: string;
+}
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Невірний формат email').required('Email обов\'язковий'),
@@ -19,16 +28,25 @@ const validationSchema = Yup.object({
 })
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<string[]>([])
+  const [googleUserState, setGoogleUserState] = useState<User | null>(null);
+  console.log("login", googleUserState)
 
 
 
-  const { login } = useAuth({
+  const { login, googleLogin } = useAuth({
     middleware: 'guest',
     redirectIfAuthenticated: '/',
   })
+
+  const googleAuth =  async () => {
+    const user = await signInWithGoogle();
+    if (user) {
+      await googleLogin(user.accessToken)
+    }
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -135,8 +153,15 @@ export default function LoginPage() {
               "Увійти"
             )}
           </Button>
+          <Button
+            type="button"
+            className="w-full font-mono bg-red-500 hover:bg-red-500/90"
+            onClick={googleAuth}
+          >
+            Увійти за допомогою Google
+          </Button>
         </form>
-        <div className="text-center">
+       <div className="text-center">
           <Link href="/forgot-password" className="font-mono text-primary hover:text-primary/90">
             Забули пароль?
           </Link>
@@ -149,6 +174,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
