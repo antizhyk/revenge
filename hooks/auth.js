@@ -146,7 +146,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
     const googleLogin = async (token) => {
         await csrf()
-        return axios.get(`/api/auth/google?token=${token}`)
+        return axios.get(`/api/google-auth?token=${token}`)
         .then(response => response.data.data)
         .catch(error => {
             if (error.response.status !== 422) throw error
