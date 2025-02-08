@@ -46,7 +46,7 @@ export default function LoginPage() {
     if (user) {
       //@ts-ignore
       await googleLogin({
-        name: user.name,
+        name: user.displayName,
         email: user.email,
         localId: user.localId
       })
