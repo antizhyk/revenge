@@ -12,6 +12,15 @@ import { toast } from 'react-hot-toast'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import parseErrors from '@/assets/parseErrors'
+import { signInWithGoogle } from '@/lib/firebase/auth'
+
+interface User {
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+  uid: string;
+  accessToken: string;
+}
 
 
 const validationSchema = Yup.object({
@@ -29,10 +38,22 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
 
-  const { register } = useAuth({
+  const { register, googleLogin } = useAuth({
     middleware: 'guest',
     redirectIfAuthenticated: '/verify-registration',
   })
+
+  const googleAuth =  async () => {
+    const user = await signInWithGoogle();
+    if (user) {
+      //@ts-ignore
+      await googleLogin({
+        name: user.displayName,
+        email: user.email,
+        localId: user.localId
+      })
+    }
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -189,9 +210,16 @@ export default function RegisterPage() {
               "Зареєструватися"
             )}
           </Button>
+          <Button
+            type="button"
+            className="w-full font-mono bg-red-500 hover:bg-red-500/90"
+            onClick={googleAuth}
+          >
+            Увійти за допомогою Google
+          </Button>
         </form>
         <div className="text-center">
-          <span className="font-mono text-gray-400">Вже маєте аккаунт? </span>
+          <span className="font-mono text-gray-400">Вже маєте аккаунт? </span> 
           <Link href="/login" className="font-mono text-primary hover:text-primary/90">
             Увійти
           </Link>
@@ -200,4 +228,3 @@ export default function RegisterPage() {
     </div>
   )
 }
-
