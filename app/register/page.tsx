@@ -46,12 +46,19 @@ export default function RegisterPage() {
   const googleAuth =  async () => {
     const user = await signInWithGoogle();
     if (user) {
-      //@ts-ignore
-      await googleLogin({
-        name: user.displayName,
-        email: user.email,
-        localId: user.localId
-      })
+      try{
+ //@ts-ignore
+ await googleLogin({
+  name: user.displayName,
+  email: user.email,
+  localId: user.localId
+})
+router.push('/');
+      }catch (error) {
+        console.error('Login failed:', error);
+        toast.error('Не вдалося увійти. Перевірте ваші дані та спробуйте ще раз.');
+      }
+     
     }
   }
 
